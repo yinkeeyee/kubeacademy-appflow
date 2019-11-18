@@ -1,5 +1,0 @@
-FROM scratch
-
-COPY go-app .
-
-CMD ["./go-app"]
