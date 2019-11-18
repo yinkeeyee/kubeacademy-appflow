@@ -44,59 +44,59 @@ pipeline {
         }
       }
     }
-  // stage('Deploy to Staging') {
-  //   when { not { branch "master" } }
-  //   steps {
-  //     container('kubectl') {
-  //         dir ("manifests") {
-  //             writeFile file: "overlays/staging/kustomization.yaml", text: """
-  //             bases:
-  //             - ../../base
-  //             namespace: staging
-  //             patchesJson6902:
-  //             - target:
-  //                 group: extensions
-  //                 version: v1beta1
-  //                 kind: Ingress
-  //                 name: website
-  //               path: ingress_patch.yaml
-  //             images:
-  //             - name: hugo
-  //               newName: ${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}
-  //               newTag: "${env.BUILD_NUMBER}"
-  //           """
+  stage('Deploy to Staging') {
+    when { not { branch "master" } }
+    steps {
+      container('kubectl') {
+          dir ("manifests") {
+              writeFile file: "overlays/staging/kustomization.yaml", text: """
+              bases:
+              - ../../base
+              namespace: staging
+              patchesJson6902:
+              - target:
+                  group: extensions
+                  version: v1beta1
+                  kind: Ingress
+                  name: website
+                path: ingress_patch.yaml
+              images:
+              - name: hugo
+                newName: ${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}
+                newTag: "${env.BUILD_NUMBER}"
+            """
 
-  //           sh ("kubectl apply -k overlays/staging")
-  //         }
-  //     }
-  //   }
-  // }
-  // stage('Deploy to Production') {
-  //   when { branch "master" }
-  //   steps {
-  //     container('kubectl') {
-  //         dir ("manifests") {
-  //           writeFile file: "overlays/production/kustomization.yaml", text: """
-  //             bases:
-  //             - ../../base
-  //             namespace: production
-  //             patchesJson6902:
-  //             - target:
-  //                 group: extensions
-  //                 version: v1beta1
-  //                 kind: Ingress
-  //                 name: website
-  //               path: ingress_patch.yaml
-  //             images:
-  //             - name: hugo
-  //               newName: ${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}
-  //               newTag: "${env.BUILD_NUMBER}"
-  //           """
+            sh ("kubectl apply -k overlays/staging")
+          }
+      }
+    }
+  }
+  stage('Deploy to Production') {
+    when { branch "master" }
+    steps {
+      container('kubectl') {
+          dir ("manifests") {
+            writeFile file: "overlays/production/kustomization.yaml", text: """
+              bases:
+              - ../../base
+              namespace: production
+              patchesJson6902:
+              - target:
+                  group: extensions
+                  version: v1beta1
+                  kind: Ingress
+                  name: website
+                path: ingress_patch.yaml
+              images:
+              - name: hugo
+                newName: ${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}
+                newTag: "${env.BUILD_NUMBER}"
+             """
 
-  //           sh ("kubectl apply -k overlays/production")
-  //         }
-  //     }
-  //   }
-  // }
+             sh ("kubectl apply -k overlays/production")
+          }
+      }
+    }
+  }
  }
 }
